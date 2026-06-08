@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: hotel-booking-system
+    runtime: docker
+    plan: free
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: SEED_DATA
+        value: true
