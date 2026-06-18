@@ -7,8 +7,8 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
 <main class="main auth-shell">
-    <a class="brand" th:href="@{/}">Hotel Booking</a>
     <section class="panel">
         <h1>Login</h1>
         <div class="alert success" th:if="${success}" th:text="${success}"></div>

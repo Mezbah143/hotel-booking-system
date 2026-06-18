@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
+<main class="main">
+    <div class="page-header">
+        <div>
+            <p class="eyebrow">Administration</p>
+            <h1>Hotel Overview</h1>
+            <p class="meta">Monitor inventory, guests, and booking activity.</p>
+        </div>
+        <div class="actions">
+            <a class="button secondary" th:href="@{/admin/rooms}">Manage Rooms</a>
+            <a class="button" th:href="@{/admin/bookings}">Manage Bookings</a>
+        </div>
+    </div>
+
+    <section class="stats-grid">
+        <article class="stat-card"><span>Total Rooms</span><strong th:text="${totalRooms}">0</strong></article>
+        <article class="stat-card"><span>Available Rooms</span><strong th:text="${availableRooms}">0</strong></article>
+        <article class="stat-card"><span>Active Bookings</span><strong th:text="${activeBookings}">0</strong></article>
+        <article class="stat-card"><span>Total Bookings</span><strong th:text="${totalBookings}">0</strong></article>
+        <article class="stat-card"><span>Registered Users</span><strong th:text="${registeredUsers}">0</strong></article>
+    </section>
+
+    <div class="section-head">
+        <h2>Recent Bookings</h2>
+        <a th:href="@{/admin/bookings}">View all</a>
+    </div>
+    <div class="empty-state" th:if="${#lists.isEmpty(recentBookings)}">
+        <h2>No booking activity</h2>
+        <p>New reservations will appear here.</p>
+    </div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(recentBookings)}">
+        <table>
+            <thead><tr><th>Guest</th><th>Room</th><th>Stay</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody>
+            <tr th:each="booking : ${recentBookings}">
+                <td><strong th:text="${booking.user.name}"></strong><div class="meta" th:text="${booking.user.email}"></div></td>
+                <td th:text="${booking.room.name}"></td>
+                <td th:text="${booking.checkInDate + ' to ' + booking.checkOutDate}"></td>
+                <td th:text="${'$' + booking.totalPrice}"></td>
+                <td><span class="status" th:classappend="${booking.status.name().toLowerCase()}" th:text="${booking.status}"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

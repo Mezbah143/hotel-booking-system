@@ -6,12 +6,13 @@ Spring Boot MVC final project for a simple hotel room booking website.
 
 - Register, login, and logout
 - User and admin roles
-- Browse and search hotel rooms
+- Search rooms by keyword, city, type, guests, price, and available dates
 - View room details with images
-- Book rooms with check-in and check-out dates
-- View and cancel personal bookings
-- Admin add, edit, delete, and hide rooms
-- Admin image upload for room photos
+- Book rooms with dates, guest count, and optional special requests
+- View booking confirmation/details and cancel personal bookings
+- Admin dashboard with room, user, and booking statistics
+- Admin room and booking management
+- Persistent room image uploads stored in MySQL
 - MySQL database with Spring Data JPA
 
 ## Local Setup
@@ -28,10 +29,10 @@ Create a local MySQL database:
 CREATE DATABASE hotel_booking;
 ```
 
-Run the app:
+Run the app with the included Maven Wrapper:
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 The default local database settings are:
@@ -59,7 +60,7 @@ Set these environment variables in Render:
 - `JPA_DDL_AUTO=update`
 - `SEED_DATA=true`
 
-Use an external MySQL database provider for the deployed database. The app uses local uploaded files for room images; on Render, uploaded files may not persist after redeploys, so seeded image URLs remain available as a fallback.
+The live deployment uses Railway MySQL. Uploaded room images are stored in MySQL so they survive Render redeploys; seeded image URLs remain available as fallbacks.
 
 ## Final Report Checklist
 

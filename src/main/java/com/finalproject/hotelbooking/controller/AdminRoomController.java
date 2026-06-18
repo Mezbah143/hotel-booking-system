@@ -1,7 +1,6 @@
 package com.finalproject.hotelbooking.controller;
 
 import com.finalproject.hotelbooking.model.Room;
-import com.finalproject.hotelbooking.service.FileStorageService;
 import com.finalproject.hotelbooking.service.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -21,13 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminRoomController {
 
     private static final String DEFAULT_IMAGE = "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80";
+    private static final long MAX_IMAGE_SIZE = 5L * 1024 * 1024;
 
     private final RoomService roomService;
-    private final FileStorageService fileStorageService;
 
-    public AdminRoomController(RoomService roomService, FileStorageService fileStorageService) {
+    public AdminRoomController(RoomService roomService) {
         this.roomService = roomService;
-        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping
@@ -62,11 +60,12 @@ public class AdminRoomController {
             model.addAttribute("formTitle", room.getId() == null ? "Add Room" : "Edit Room");
             return "admin/room-form";
         }
-        String uploadedPath = fileStorageService.store(imageFile);
-        if (uploadedPath != null) {
-            room.setImagePath(uploadedPath);
-        } else if (room.getImagePath() == null || room.getImagePath().isBlank()) {
-            room.setImagePath(DEFAULT_IMAGE);
+        try {
+            preserveOrStoreImage(room, imageFile);
+        } catch (IllegalArgumentException exception) {
+            bindingResult.rejectValue("imageData", "image", exception.getMessage());
+            model.addAttribute("formTitle", room.getId() == null ? "Add Room" : "Edit Room");
+            return "admin/room-form";
         }
         roomService.save(room);
         redirectAttributes.addFlashAttribute("success", "Room saved.");
@@ -78,5 +77,37 @@ public class AdminRoomController {
         roomService.delete(id);
         redirectAttributes.addFlashAttribute("success", "Room deleted or hidden if it already had bookings.");
         return "redirect:/admin/rooms";
+    }
+
+    private void preserveOrStoreImage(Room room, MultipartFile imageFile) {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String contentType = imageFile.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new IllegalArgumentException("Please upload a valid image file.");
+            }
+            if (imageFile.getSize() > MAX_IMAGE_SIZE) {
+                throw new IllegalArgumentException("Room image must be 5 MB or smaller.");
+            }
+            try {
+                room.setImageData(imageFile.getBytes());
+                room.setImageContentType(contentType);
+            } catch (Exception exception) {
+                throw new IllegalArgumentException("Could not read the uploaded image.");
+            }
+            return;
+        }
+
+        if (room.getId() != null) {
+            Room existing = roomService.getRoom(room.getId());
+            room.setImageData(existing.getImageData());
+            room.setImageContentType(existing.getImageContentType());
+            if (room.getImagePath() == null || room.getImagePath().isBlank()) {
+                room.setImagePath(existing.getImagePath());
+            }
+        }
+
+        if (!room.hasStoredImage() && (room.getImagePath() == null || room.getImagePath().isBlank())) {
+            room.setImagePath(DEFAULT_IMAGE);
+        }
     }
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
+<main class="main narrow-main">
+    <div class="alert success" th:if="${success}" th:text="${success}"></div>
+    <section class="confirmation-head">
+        <p class="eyebrow">Booking reference <span th:text="${'#' + booking.id}">#1</span></p>
+        <h1 th:text="${booking.status.name() == 'BOOKED' ? 'Your stay is booked' : 'Booking cancelled'}">Your stay is booked</h1>
+        <p class="meta">Keep this page for your booking details and total.</p>
+    </section>
+
+    <section class="booking-detail-layout">
+        <div>
+            <img class="room-image detail-image"
+                 th:src="${booking.room.hasStoredImage() ? '/rooms/' + booking.room.id + '/image' : booking.room.imagePath}"
+                 th:alt="${booking.room.name}">
+            <h2 th:text="${booking.room.name}">Room</h2>
+            <p class="meta" th:text="${booking.room.city + ' / ' + booking.room.roomType}"></p>
+        </div>
+        <dl class="booking-summary">
+            <div><dt>Status</dt><dd><span class="status" th:classappend="${booking.status.name().toLowerCase()}" th:text="${booking.status}"></span></dd></div>
+            <div><dt>Check-in</dt><dd th:text="${booking.checkInDate}"></dd></div>
+            <div><dt>Check-out</dt><dd th:text="${booking.checkOutDate}"></dd></div>
+            <div><dt>Guests</dt><dd th:text="${booking.guestCount != null ? booking.guestCount : 1}"></dd></div>
+            <div><dt>Total</dt><dd class="price" th:text="${'$' + booking.totalPrice}"></dd></div>
+        </dl>
+    </section>
+
+    <section class="request-section" th:if="${booking.specialRequest != null}">
+        <h2>Special Request</h2>
+        <p th:text="${booking.specialRequest}"></p>
+    </section>
+    <div class="actions page-actions">
+        <a class="button secondary" th:href="@{/bookings}">All Bookings</a>
+        <a class="button" th:href="@{/rooms}">Find Another Room</a>
+    </div>
+</main>
+</body>
+</html>

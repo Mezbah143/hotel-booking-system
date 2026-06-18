@@ -7,17 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<header class="topbar">
-    <nav class="nav">
-        <a class="brand" th:href="@{/}">Hotel Booking</a>
-        <div class="nav-links">
-            <a th:href="@{/rooms}">Rooms</a>
-            <a th:href="@{/admin/rooms}">Admin</a>
-        </div>
-    </nav>
-</header>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
 <main class="main">
     <section class="panel">
+        <p class="eyebrow">Room inventory</p>
         <h1 th:text="${formTitle}">Room Form</h1>
         <form class="form-grid" th:action="@{/admin/rooms}" th:object="${room}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -60,7 +53,15 @@
             <label>
                 Room Image
                 <input class="form-control" type="file" name="imageFile" accept="image/*">
+                <span class="meta">JPEG, PNG, GIF, or WebP up to 5 MB. Images are stored in MySQL.</span>
+                <span class="error-text" th:if="${#fields.hasErrors('imageData')}" th:errors="*{imageData}"></span>
             </label>
+            <div class="current-image" th:if="${room.id != null}">
+                <span class="meta">Current image</span>
+                <img class="room-thumb large"
+                     th:src="${room.hasStoredImage() ? '/rooms/' + room.id + '/image' : room.imagePath}"
+                     th:alt="${room.name}">
+            </div>
             <label>
                 <span>
                     <input type="checkbox" th:field="*{available}">

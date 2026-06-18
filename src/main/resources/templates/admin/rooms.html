@@ -7,33 +7,25 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<header class="topbar">
-    <nav class="nav">
-        <a class="brand" th:href="@{/}">Hotel Booking</a>
-        <div class="nav-links">
-            <a th:href="@{/rooms}">Rooms</a>
-            <a th:href="@{/bookings}">My Bookings</a>
-            <a th:href="@{/admin/rooms}">Admin</a>
-            <form th:action="@{/logout}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button type="submit" class="button secondary">Logout</button>
-            </form>
-        </div>
-    </nav>
-</header>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
 <main class="main">
-    <div class="section-head">
+    <div class="page-header">
         <div>
+            <p class="eyebrow">Administration</p>
             <h1>Admin Room Management</h1>
-            <p class="meta">Create, update, delete, and hide room records.</p>
+            <p class="meta">Create, update, hide, and add persistent images to room records.</p>
         </div>
-        <a class="button" th:href="@{/admin/rooms/new}">Add Room</a>
+        <div class="actions">
+            <a class="button secondary" th:href="@{/admin}">Dashboard</a>
+            <a class="button" th:href="@{/admin/rooms/new}">Add Room</a>
+        </div>
     </div>
     <div class="alert success" th:if="${success}" th:text="${success}"></div>
     <div class="table-wrap">
         <table>
             <thead>
             <tr>
+                <th>Image</th>
                 <th>Room</th>
                 <th>City</th>
                 <th>Type</th>
@@ -44,6 +36,9 @@
             </thead>
             <tbody>
             <tr th:each="room : ${rooms}">
+                <td><img class="room-thumb"
+                         th:src="${room.hasStoredImage() ? '/rooms/' + room.id + '/image' : room.imagePath}"
+                         th:alt="${room.name}"></td>
                 <td th:text="${room.name}">Room</td>
                 <td th:text="${room.city}">City</td>
                 <td th:text="${room.roomType}">Type</td>

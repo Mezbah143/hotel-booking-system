@@ -1,6 +1,7 @@
 package com.finalproject.hotelbooking.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -9,7 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,6 +42,13 @@ public class Booking {
 
     @NotNull
     private BigDecimal totalPrice;
+
+    @Min(1)
+    private Integer guestCount;
+
+    @Size(max = 500)
+    @Column(length = 500)
+    private String specialRequest;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status = BookingStatus.BOOKED;
@@ -91,6 +101,22 @@ public class Booking {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Integer getGuestCount() {
+        return guestCount;
+    }
+
+    public void setGuestCount(Integer guestCount) {
+        this.guestCount = guestCount;
+    }
+
+    public String getSpecialRequest() {
+        return specialRequest;
+    }
+
+    public void setSpecialRequest(String specialRequest) {
+        this.specialRequest = specialRequest;
     }
 
     public BookingStatus getStatus() {

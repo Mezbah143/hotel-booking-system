@@ -89,7 +89,7 @@ a:hover {
 }
 
 .hero h1 {
-    font-size: clamp(34px, 6vw, 64px);
+    font-size: 58px;
     line-height: 1;
     margin: 0 0 16px;
 }
@@ -105,6 +105,14 @@ a:hover {
     gap: 10px;
     margin-top: 24px;
     max-width: 680px;
+}
+
+.hero-search {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: minmax(190px, 2fr) repeat(2, minmax(145px, 1fr)) 90px auto;
+    margin-top: 24px;
+    width: min(100%, 920px);
 }
 
 .search-row input,
@@ -145,6 +153,11 @@ button:hover {
     text-decoration: none;
 }
 
+.button.compact {
+    min-height: 36px;
+    padding: 7px 12px;
+}
+
 .button.secondary {
     background: #eef3f7;
     color: var(--ink);
@@ -161,6 +174,27 @@ button.danger {
     gap: 16px;
     justify-content: space-between;
     margin: 34px 0 16px;
+}
+
+.page-header {
+    align-items: end;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.page-header h1,
+.confirmation-head h1 {
+    margin: 4px 0 8px;
+}
+
+.eyebrow {
+    color: var(--brand);
+    font-size: 13px;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
 }
 
 .grid {
@@ -210,6 +244,37 @@ button.danger {
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 22px;
+}
+
+.filter-panel {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    padding: 20px;
+}
+
+.filter-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 16px;
+}
+
+.filter-wide {
+    grid-column: span 2;
+}
+
+.results-summary {
+    align-items: baseline;
+    display: flex;
+    gap: 7px;
+    margin: 20px 0 12px;
+}
+
+.results-summary strong {
+    color: var(--brand-dark);
+    font-size: 24px;
 }
 
 .form-grid {
@@ -292,6 +357,33 @@ th {
     color: var(--danger);
 }
 
+.stats-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.stat-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--brand);
+    border-radius: 6px;
+    display: grid;
+    gap: 8px;
+    min-height: 118px;
+    padding: 18px;
+}
+
+.stat-card span {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.stat-card strong {
+    font-size: 32px;
+}
+
 .actions {
     align-items: center;
     display: flex;
@@ -302,6 +394,108 @@ th {
 .auth-shell {
     margin: 32px auto;
     max-width: 480px;
+}
+
+.empty-state {
+    border: 1px dashed #aeb9c5;
+    margin: 22px 0;
+    padding: 36px 22px;
+    text-align: center;
+}
+
+.empty-state h2 {
+    margin-top: 0;
+}
+
+.room-thumb {
+    aspect-ratio: 4 / 3;
+    border-radius: 5px;
+    height: 54px;
+    object-fit: cover;
+}
+
+.room-thumb.large {
+    height: 120px;
+}
+
+.current-image {
+    align-items: start;
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+}
+
+.detail-image {
+    max-height: 520px;
+}
+
+.compact-textarea {
+    min-height: 92px !important;
+}
+
+.optional {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.narrow-main {
+    max-width: 920px;
+}
+
+.confirmation-head {
+    margin-bottom: 24px;
+}
+
+.booking-detail-layout {
+    display: grid;
+    gap: 28px;
+    grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+}
+
+.booking-summary {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 0;
+    padding: 10px 22px;
+}
+
+.booking-summary div {
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 14px 0;
+}
+
+.booking-summary div:last-child {
+    border-bottom: 0;
+}
+
+.booking-summary dt {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.booking-summary dd {
+    margin: 0;
+    text-align: right;
+}
+
+.request-section {
+    border-left: 4px solid var(--accent);
+    margin-top: 24px;
+    padding: 4px 0 4px 18px;
+}
+
+.request-section h2 {
+    margin-top: 0;
+}
+
+.page-actions {
+    margin-top: 28px;
 }
 
 @media (max-width: 760px) {
@@ -315,13 +509,48 @@ th {
         padding: 26px;
     }
 
+    .hero h1 {
+        font-size: 40px;
+    }
+
     .search-row,
     .detail-layout,
-    .two-col {
+    .two-col,
+    .hero-search,
+    .booking-detail-layout {
         grid-template-columns: 1fr;
     }
 
     .search-row {
         display: grid;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .filter-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-wide {
+        grid-column: span 1;
+    }
+
+    .nav-links {
+        width: 100%;
+    }
+}
+
+@media (min-width: 761px) and (max-width: 1050px) {
+    .hero-search {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-grid,
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

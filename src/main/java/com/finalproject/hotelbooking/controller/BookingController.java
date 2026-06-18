@@ -31,14 +31,17 @@ public class BookingController {
             @RequestParam Long roomId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+            @RequestParam Integer guestCount,
+            @RequestParam(required = false) String specialRequest,
             Authentication authentication,
             RedirectAttributes redirectAttributes
     ) {
         AppUser user = userService.getByEmail(authentication.getName());
         try {
-            bookingService.createBooking(user, roomId, checkInDate, checkOutDate);
+            var booking = bookingService.createBooking(
+                    user, roomId, checkInDate, checkOutDate, guestCount, specialRequest);
             redirectAttributes.addFlashAttribute("success", "Booking created successfully.");
-            return "redirect:/bookings";
+            return "redirect:/bookings/" + booking.getId();
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("error", exception.getMessage());
             return "redirect:/rooms/" + roomId;
@@ -50,6 +53,23 @@ public class BookingController {
         AppUser user = userService.getByEmail(authentication.getName());
         model.addAttribute("bookings", bookingService.findUserBookings(user));
         return "bookings/list";
+    }
+
+    @GetMapping("/bookings/{id}")
+    public String bookingDetail(
+            @PathVariable Long id,
+            Authentication authentication,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
+        AppUser user = userService.getByEmail(authentication.getName());
+        try {
+            model.addAttribute("booking", bookingService.getUserBooking(id, user));
+            return "bookings/detail";
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("error", exception.getMessage());
+            return "redirect:/bookings";
+        }
     }
 
     @PostMapping("/bookings/{id}/cancel")

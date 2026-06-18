@@ -66,11 +66,15 @@ class BookingServiceTest {
                 user,
                 room.getId(),
                 LocalDate.now().plusDays(1),
-                LocalDate.now().plusDays(4)
+                LocalDate.now().plusDays(4),
+                2,
+                "  Late arrival  "
         );
 
         assertThat(booking.getStatus()).isEqualTo(BookingStatus.BOOKED);
         assertThat(booking.getTotalPrice()).isEqualByComparingTo("300.00");
+        assertThat(booking.getGuestCount()).isEqualTo(2);
+        assertThat(booking.getSpecialRequest()).isEqualTo("Late arrival");
     }
 
     @Test
@@ -79,7 +83,9 @@ class BookingServiceTest {
                 user,
                 room.getId(),
                 LocalDate.now().plusDays(3),
-                LocalDate.now().plusDays(2)
+                LocalDate.now().plusDays(2),
+                1,
+                null
         )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Check-out date must be after check-in date");
     }
@@ -90,14 +96,18 @@ class BookingServiceTest {
                 user,
                 room.getId(),
                 LocalDate.now().plusDays(2),
-                LocalDate.now().plusDays(5)
+                LocalDate.now().plusDays(5),
+                1,
+                null
         );
 
         assertThatThrownBy(() -> bookingService.createBooking(
                 user,
                 room.getId(),
                 LocalDate.now().plusDays(4),
-                LocalDate.now().plusDays(6)
+                LocalDate.now().plusDays(6),
+                1,
+                null
         )).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("already booked");
     }
@@ -108,12 +118,66 @@ class BookingServiceTest {
                 user,
                 room.getId(),
                 LocalDate.now().plusDays(1),
-                LocalDate.now().plusDays(2)
+                LocalDate.now().plusDays(2),
+                1,
+                null
         );
 
         bookingService.cancelBooking(booking.getId(), user);
 
         Booking cancelled = bookingRepository.findById(booking.getId()).orElseThrow();
         assertThat(cancelled.getStatus()).isEqualTo(BookingStatus.CANCELLED);
+    }
+
+    @Test
+    void rejectsGuestCountOverRoomCapacity() {
+        assertThatThrownBy(() -> bookingService.createBooking(
+                user,
+                room.getId(),
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(2),
+                3,
+                null
+        )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("up to 2 guests");
+    }
+
+    @Test
+    void preventsUserFromReadingAnotherUsersBooking() {
+        Booking booking = bookingService.createBooking(
+                user,
+                room.getId(),
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(2),
+                1,
+                null
+        );
+        AppUser other = new AppUser();
+        other.setName("Other User");
+        other.setEmail("other@example.com");
+        other.setPassword("password");
+        other = userRepository.save(other);
+
+        AppUser finalOther = other;
+        assertThatThrownBy(() -> bookingService.getUserBooking(booking.getId(), finalOther))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("not found");
+    }
+
+    @Test
+    void adminCanCancelBooking() {
+        Booking booking = bookingService.createBooking(
+                user,
+                room.getId(),
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(2),
+                1,
+                null
+        );
+
+        bookingService.cancelBookingAsAdmin(booking.getId());
+
+        assertThat(bookingRepository.findById(booking.getId()).orElseThrow().getStatus())
+                .isEqualTo(BookingStatus.CANCELLED);
     }
 }

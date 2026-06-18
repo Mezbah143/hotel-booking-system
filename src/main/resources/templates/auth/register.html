@@ -7,8 +7,8 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
 <main class="main auth-shell">
-    <a class="brand" th:href="@{/}">Hotel Booking</a>
     <section class="panel">
         <h1>Create Account</h1>
         <form class="form-grid" th:action="@{/register}" th:object="${user}" method="post">

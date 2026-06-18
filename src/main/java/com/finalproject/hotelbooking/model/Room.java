@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -45,6 +47,13 @@ public class Room {
 
     @Size(max = 500)
     private String imagePath;
+
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
+    private byte[] imageData;
+
+    @Size(max = 100)
+    private String imageContentType;
 
     private boolean available = true;
 
@@ -110,6 +119,27 @@ public class Room {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public String getImageContentType() {
+        return imageContentType;
+    }
+
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
+    }
+
+    @Transient
+    public boolean hasStoredImage() {
+        return imageData != null && imageData.length > 0;
     }
 
     public boolean isAvailable() {
